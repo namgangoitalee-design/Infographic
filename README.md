@@ -1,3 +1,551 @@
 # Infographic
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정책연구 지원 인포그래픽 시스템</title>
+    
+    <!-- Tailwind CSS CDN 로드 --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .container-box {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* 이미지 높이를 유동적으로 처리하여 전체가 다 보이게 함 */
+        .infographic-box {
+            min-height: 400px;
+            height: auto;
+            transition: all 0.3s ease;
+        }
+        /* 구조화 텍스트 영역 스타일 */
+        #structuredDataArea {
+            min-height: 400px;
+            height: auto; /* 내용에 따라 늘어나도록 설정 */
+            overflow-y: auto;
+            white-space: pre-wrap; /* 마크다운 개조식 줄바꿈 및 들여쓰기 유지 */
+            border-left: 1px solid #e2e8f0;
+            text-align: left; /* 명시적 좌측 정렬 */
+            line-height: 1.6; /* 가독성 향상 */
+            /* Markdown 개조식 가독성을 위한 패딩 조정 */
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        /* 기타 스타일 */
+        .file-upload-label { cursor: pointer; transition: background-color 0.2s; }
+        .file-upload-label:hover { background-color: #f3f4f6; }
+        #dropZone { border: 2px dashed #9ca3af; background-color: #f9fafb; transition: all 0.2s; }
+        #dropZone.drag-over { border-color: #4f46e5; background-color: #eef2ff; }
+        #promptButton { display: none; }
+        #promptModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 600px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
+    </style>
+</head>
+<body>
+    <div class="container-box min-h-screen">
+        <!-- 멋지게 디자인된 헤더 박스 --><header class="text-center py-8 mb-6 rounded-xl shadow-2xl ring-2 ring-indigo-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-1">
+                <span class="text-indigo-600">🏛️</span> 정책연구 지원 인포그래픽 시스템
+            </h1>
+            <!-- 2. 제목 아래 설명 문구 변경 반영 --><p class="text-gray-600 mt-2 text-lg font-medium border-t border-indigo-200 pt-2 mx-10">첨부 파일과 선택한 유형을 기반으로, 디자인 템플릿과 구조화된 한국어 텍스트를 제안합니다.</p>
+        </header>
 
-안녕하세요
+        <main>
+            <!-- 1단계: 입력 및 제어 패널 --><div class="bg-white p-6 rounded-xl shadow-xl mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">1단계: 주제, 유형, 색상 및 파일 첨부</h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- 인포그래픽 유형 선택 --><div class="col-span-1">
+                        <label for="infographicType" class="block text-sm font-medium text-gray-700 mb-1">인포그래픽 유형:</label>
+                        <select id="infographicType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            <option value="PolicyRecommendation" selected>정책 추천형 (문제, 해결책, 기대 효과)</option>
+                            <option value="Statistical">통계형 (그래프, 차트, 데이터)</option>
+                            <option value="Timeline">타임라인 (연대순 이벤트, 로드맵)</option>
+                            <option value="Process">프로세스 (단계별 방법, 워크플로)</option>
+                            <option value="Comparison">비교형 (옵션, 제품, 정책 비교)</option>
+                            <option value="Geographical/Map">지리/지도 (위치 기반 데이터)</option>
+                            <option value="Sectional Information">섹션 기반 정보형 (분할된 정보 블록)</option>
+                            <option value="Centralized Hub">중앙 집중형 (중앙 주제, 방사형 정보)</option>
+                        </select>
+                    </div>
+
+                    <!-- 색상 팔레트 선택 기능 --><div class="col-span-1">
+                        <label for="colorPalette" class="block text-sm font-medium text-gray-700 mb-1">🎨 색상 팔레트 선택:</label>
+                        <select id="colorPalette" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            <option value="Policy Blue/Gray" selected>정책형 블루/그레이 (신뢰, 안정)</option>
+                            <option value="Vibrant Red/Yellow/Black">경고형 레드/옐로우 (긴급, 위험 분석)</option>
+                            <option value="Nature Green/Earth Tones">환경/지속가능형 (환경, ESG)</option>
+                            <option value="Modern Teal/Orange">모던 테마 (혁신, 기술)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 이미지 비율 선택 기능 --><div class="col-span-1">
+                        <label for="aspectRatio" class="block text-sm font-medium text-gray-700 mb-1">📐 이미지 비율 선택:</label>
+                        <select id="aspectRatio" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            <option value="16:9" selected>16:9 (가로 표준 / 보고서)</option>
+                            <option value="4:3">4:3 (프레젠테이션)</option>
+                            <option value="1:1">1:1 (정사각형 / SNS)</option>
+                            <option value="9:16">9:16 (세로형 / 스토리)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 텍스트 입력 --><textarea id="topicInput" rows="3" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none text-base" placeholder="인포그래픽의 핵심 주제나, 첨부 파일에 대한 간단한 설명을 한국어로 입력하세요."></textarea>
+
+                <!-- 드래그 앤 드롭 영역 및 다중 파일 첨부 --><div id="dropZone" class="p-4 mb-4 rounded-lg flex flex-col items-center justify-center text-center">
+                    <p class="text-gray-700 font-medium mb-2">여기에 파일을 끌어다 놓으세요.</p>
+                    <p class="text-sm text-gray-500 mb-3">또는 아래 버튼을 클릭하여 파일을 선택하세요. (최대 5개 파일)</p>
+                    
+                    <input type="file" id="fileInput" class="hidden" multiple accept=".pdf,.doc,.docx,.txt,.md,.rtf,.odt,.xls,.xlsx,.csv,.ods,.json,.tsv,.png,.jpg,.jpeg,.gif,.webp,.ppt,.pptx,.odp,.html,.htm,.xml,.tex,.zip">
+                    <label for="fileInput" class="file-upload-label w-1/2 flex items-center justify-center px-4 py-2 border border-indigo-400 text-indigo-600 bg-white rounded-lg shadow-sm font-medium hover:border-indigo-600">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        파일 선택 (여러 개 가능)
+                    </label>
+                    <div id="fileNameDisplay" class="text-sm text-gray-500 text-center mt-3 w-full max-h-24 overflow-y-auto">첨부된 파일 없음</div>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <!-- 리셋 버튼 --><button id="resetButton" onclick="resetForm()" class="w-1/4 bg-gray-400 text-white py-3 rounded-xl font-bold text-lg hover:bg-gray-500 transition duration-150 shadow-md flex items-center justify-center">
+                        초기화
+                    </button>
+                    <!-- 프롬프트 보기 버튼 (디버깅용) --><button id="promptButton" onclick="showPromptModal()" class="w-1/4 bg-purple-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-purple-700 transition duration-150 shadow-md flex items-center justify-center">
+                        프롬프트 보기
+                    </button>
+                    <button id="generateButton" onclick="generateInfographics()" class="w-2/4 bg-indigo-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-indigo-700 transition duration-150 shadow-md flex items-center justify-center">
+                        <span id="buttonText">인포그래픽 시안 생성 시작</span>
+                        <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2단계: 결과 출력 패널 --><div class="bg-white p-6 rounded-xl shadow-xl">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">2단계: 생성된 결과물 (PPT 최적화)</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- 디자인 템플릿 (이미지) --><div class="col-span-1">
+                        <h3 class="font-bold text-gray-700 mb-2">디자인 템플릿 (PNG 이미지)</h3>
+                        <div id="infographicContainer" class="infographic-box w-full flex items-center justify-center bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden relative">
+                            <p class="text-gray-500 text-center p-4" id="messageA">주제를 입력하고 생성 버튼을 눌러주세요.</p>
+                            <img id="imageA" src="" alt="생성된 인포그래픽 디자인 템플릿" class="max-w-full h-auto object-contain hidden">
+                        </div>
+                        <button id="downloadButton" class="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-xl font-bold hover:bg-green-700 transition duration-150 shadow-md">
+                            템플릿 이미지 다운로드 (.png)
+                        </button>
+                    </div>
+
+                    <!-- 구조화된 한국어 텍스트 --><div class="col-span-1">
+                        <div class="flex justify-between items-center mb-2 pt-1 md:pt-0">
+                            <h3 class="font-bold text-gray-700">구조화된 한국어 텍스트 (PPT 삽입 최적화)</h3>
+                            <button id="copyButton" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold py-1 px-2 border border-indigo-200 rounded-lg transition duration-150">텍스트 복사</button>
+                        </div>
+                        <!-- 1. 구조화된 텍스트 좌측 정렬 및 높이 조정 --><textarea id="structuredDataArea" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-indigo-500 text-left" style="min-height: 400px; height: auto;" readonly placeholder="여기에 Gemini가 분석한 정확한 한국어 텍스트 정보가 구조화되어 나타납니다."></textarea>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 프롬프트 미리보기 모달 UI --><div id="promptModal" class="flex">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">🖼️ Gemini 이미지 생성 프롬프트</h3>
+            <p class="text-sm text-gray-600 mb-3">이 프롬프트는 Gemini 모델이 인포그래픽 유형, 색상, 첨부 파일을 분석하여 Imagen 모델에게 전달한 최종 지시어입니다.</p>
+            <textarea id="promptDisplayArea" rows="10" class="w-full p-3 border border-gray-300 rounded-lg resize-none text-xs bg-gray-50" readonly></textarea>
+            <button onclick="closePromptModal()" class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-xl font-bold hover:bg-indigo-700">닫기</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // API 키는 Canvas 환경에서 자동으로 제공됩니다.
+        const apiKey = ""; 
+        
+        // 모델 정보
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent";
+        const IMAGEN_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict";
+
+        // UI 요소 참조
+        const topicInput = document.getElementById('topicInput');
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const infographicType = document.getElementById('infographicType');
+        const colorPalette = document.getElementById('colorPalette');
+        const aspectRatio = document.getElementById('aspectRatio');
+        const generateButton = document.getElementById('generateButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const buttonText = document.getElementById('buttonText');
+        const imageA = document.getElementById('imageA');
+        const messageA = document.getElementById('messageA');
+        const downloadButton = document.getElementById('downloadButton');
+        const promptButton = document.getElementById('promptButton');
+        const structuredDataArea = document.getElementById('structuredDataArea');
+        const copyButton = document.getElementById('copyButton');
+        const dropZone = document.getElementById('dropZone');
+        const promptModal = document.getElementById('promptModal');
+        const promptDisplayArea = document.getElementById('promptDisplayArea');
+
+        // 전역 상태 변수
+        let currentInfographicBase64 = null;
+        let currentImagePrompt = null;
+
+        const MAX_FILES = 5;
+        const MAX_FILE_SIZE_MB = 4;
+        
+        // --- UI 및 이벤트 리스너 ---
+        
+        // 2. 첨부 파일 목록 표시 함수
+        const updateFileNameDisplay = (files) => {
+            const display = fileNameDisplay;
+            display.innerHTML = ''; // 이전 내용 초기화
+
+            if (!files || files.length === 0) {
+                display.textContent = '첨부된 파일 없음';
+                display.className = 'text-sm text-gray-500 text-center mt-3 w-full max-h-24 overflow-y-auto'; // 기본 스타일
+            } else {
+                display.className = 'text-sm font-semibold text-indigo-700 text-left mt-3 w-full max-h-24 overflow-y-auto p-2 bg-gray-50 rounded-md'; // 파일 첨부 시 스타일
+
+                // 파일 개수 표시
+                const countHeader = document.createElement('p');
+                countHeader.className = 'font-bold mb-1';
+                countHeader.textContent = `첨부된 파일: ${files.length}개`;
+                display.appendChild(countHeader);
+
+                // 파일 목록 (ul)
+                const ul = document.createElement('ul');
+                ul.className = 'list-disc list-inside'; // 단순한 리스트 스타일
+
+                Array.from(files).forEach(file => {
+                    const li = document.createElement('li');
+                    li.className = 'text-sm font-normal text-gray-700 truncate'; // 긴 파일명은 잘라내기
+                    li.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                    li.title = file.name; // 마우스 오버 시 전체 이름 표시
+                    ul.appendChild(li);
+                });
+                display.appendChild(ul);
+            }
+        };
+
+        fileInput.addEventListener('change', (event) => {
+            updateFileNameDisplay(event.target.files);
+        });
+
+        window.resetForm = function() {
+            topicInput.value = '';
+            fileInput.value = '';
+            infographicType.value = 'PolicyRecommendation';
+            colorPalette.value = 'Policy Blue/Gray';
+            aspectRatio.value = '16:9';
+            updateFileNameDisplay([]);
+            
+            imageA.classList.add('hidden');
+            imageA.src = '';
+            messageA.classList.remove('hidden');
+            messageA.textContent = '주제를 입력하고 생성 버튼을 눌러주세요.';
+            downloadButton.style.display = 'none';
+            promptButton.style.display = 'none';
+            structuredDataArea.value = '';
+            
+            currentInfographicBase64 = null;
+            currentImagePrompt = null;
+            
+            generateButton.disabled = false;
+            loadingSpinner.classList.add('hidden');
+            buttonText.textContent = '인포그래픽 시안 생성 시작';
+            
+            console.log('폼이 초기화되었습니다.');
+        };
+        
+        window.showPromptModal = function() {
+            if (currentImagePrompt) {
+                promptDisplayArea.value = currentImagePrompt;
+                promptModal.style.display = 'flex';
+            } else {
+                alert("생성된 프롬프트가 없습니다. 먼저 인포그래픽을 생성해주세요.");
+            }
+        };
+
+        window.closePromptModal = function() {
+            promptModal.style.display = 'none';
+        };
+
+        copyButton.addEventListener('click', () => {
+            structuredDataArea.select();
+            structuredDataArea.setSelectionRange(0, 99999);
+            
+            if (document.execCommand('copy')) {
+                alert("구조화된 텍스트가 클립보드에 복사되었습니다.");
+            } else {
+                alert("복사에 실패했습니다. Ctrl+C (Cmd-C)를 사용해주세요.");
+            }
+        });
+        
+        // 드래그 앤 드롭 로직
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => { dropZone.addEventListener(eventName, preventDefaults, false); document.body.addEventListener(eventName, preventDefaults, false); });
+        function preventDefaults (e) { e.preventDefault(); e.stopPropagation(); }
+        ['dragenter', 'dragover'].forEach(eventName => { dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false); });
+        ['dragleave', 'drop'].forEach(eventName => { dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false); });
+        dropZone.addEventListener('drop', handleDrop, false);
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > MAX_FILES) { alert(`파일은 최대 ${MAX_FILES}개까지만 첨부할 수 있습니다.`); return; }
+            let validFiles = true;
+            for (const file of files) { if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) { alert(`파일 "${file.name}"의 크기가 ${MAX_FILE_SIZE_MB}MB를 초과합니다. 모든 파일을 다시 확인해 주세요.`); validFiles = false; break; } }
+            if (validFiles) { fileInput.files = files; updateFileNameDisplay(files); }
+        }
+
+
+        // --- API 호출 유틸리티 ---
+
+        function fileToGenerativePart(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64Data = reader.result.split(',')[1]; 
+                    resolve({ inlineData: { data: base64Data, mimeType: file.type } });
+                };
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 429 && i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        console.warn(`Rate limit exceeded. Retrying in ${delay / 1000}s...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    if (response.status === 401) {
+                        throw new Error(`API 인증 오류 (401). Canvas 환경에서 API 키가 제대로 로드되지 않았거나 유효하지 않습니다.`);
+                    }
+                    if (!response.ok) {
+                        throw new Error(`API 응답 오류: ${response.statusText} (${response.status})`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error;
+                    }
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    console.warn(`Fetch error. Retrying in ${delay / 1000}s...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        // --- 1단계: 프롬프트와 구조화된 데이터 생성 (한국어 데이터 추출 및 위치 라벨 추가) ---
+        async function generatePromptAndData(topicText, infographicType, selectedPalette, files) {
+            
+            // SYSTEM PROMPT: 텍스트 단순화 및 명확한 위치 라벨 요구
+            const systemPrompt = "당신은 정책 보고서에 필요한 정보를 분석하고 구조화하는 전문가입니다. 사용자 입력과 첨부 파일을 분석하여 1) 시각적 디자인 템플릿을 위한 영어 이미지 프롬프트(최소한의 텍스트 포함)와 2) 인포그래픽에 삽입할 **정확하고 깨끗한 한국어 텍스트 정보**를 추출해야 합니다. 특히, 텍스트의 내용을 **PPT 슬라이드에 바로 복사/붙여넣기 할 수 있는 수준의 핵심 요약과 단문 위주**로 작성해야 합니다. 또한, 각 섹션을 **'=== [위치: 상단 제목] ==='**과 같은 명확한 구분선과 라벨로 시작하고, 내용 부분은 **'# 제목'**과 **'* 핵심 내용'**의 Markdown 형식으로 분리하여 사용자가 PPT에서 쉽게 활용할 수 있도록 구성해야 합니다. 최종 출력은 하나의 JSON 객체여야 합니다.";
+            
+            const userQuery = `다음 주제와 데이터(첨부 파일 참조)를 바탕으로 두 가지 결과를 생성하세요:
+1. **Image Prompt:** **'${infographicType}'** 템플릿의 시각적 설명을 위한 영어 프롬프트. **'${selectedPalette}'** 팔레트를 사용해야 합니다. 이미지에는 **ABSOLUTELY NO TEXTUAL LABELS OR WORDS.** Only focus on visual structure, data charts, and clear icons. **Numerical data within charts/graphs should be visually present but not as legible text labels.**
+2. **Structured Data (한국어):** 인포그래픽에 삽입할 **완전하고 정확한 한국어 텍스트 내용**을 Markdown 형식으로 정리합니다. **각 섹션 앞에 '=== [위치: 상단 제목] ==='과 같이 명확한 구분선을 포함한 위치 라벨을 추가**하고, 내용은 **단문과 핵심 요약 위주로 구성**하여 복잡도를 최소화해야 합니다.
+
+핵심 주제: ${topicText}`;
+
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    "imagePrompt": { "type": "STRING", "description": "The detailed Imagen visual prompt for the template, focusing on layout and color, using placeholder text." },
+                    "structuredData": { "type": "STRING", "description": "The complete, legible Korean text content for the infographic, formatted using Markdown, including placement labels." }
+                },
+                required: ["imagePrompt", "structuredData"]
+            };
+
+
+            // API 호출 준비
+            let contents = [];
+            if (files && files.length > 0) {
+                const fileParts = await Promise.all(Array.from(files).map(fileToGenerativePart));
+                contents.push({ role: "user", parts: [...fileParts, { text: userQuery }] });
+            } else {
+                contents.push({ role: "user", parts: [{ text: userQuery }] });
+            }
+
+            const payload = {
+                contents: contents,
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                }
+            };
+
+            const url = `${GEMINI_API_URL}?key=${apiKey}`;
+            const response = await fetchWithRetry(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!jsonText) {
+                console.error("Gemini JSON response error:", result);
+                throw new Error("Gemini 응답에서 유효한 JSON을 찾을 수 없거나 데이터 구조가 잘못되었습니다. (콘솔 로그 확인)");
+            }
+            try {
+                return JSON.parse(jsonText);
+            } catch (e) {
+                console.error("JSON 파싱 오류:", e);
+                console.error("수신된 텍스트:", jsonText);
+                throw new Error("Gemini가 유효하지 않은 JSON을 반환했습니다. 템플릿 프롬프트나 데이터가 너무 길거나 복잡했을 수 있습니다. (콘솔 로그 확인)");
+            }
+        }
+        
+        // --- 2단계: 이미지 생성 함수 (PNG 모드 전용) ---
+        async function generateImage(imagePrompt, selectedPalette, selectedRatio) {
+            // 템플릿 프롬프트: 2. 글자는 없애고 숫자는 깨지지 않게 포함
+            const finalPrompt = `A professional infographic design TEMPLATE, clean lines, modern flat design, using the **${selectedPalette}** color palette. ABSOLUTELY NO TEXTUAL LABELS OR WORDS. Only focus on visual structure, data charts, and clear icons. Numerical data within charts/graphs should be visually present but not as legible text labels. Based on the concept: "${imagePrompt}"`;
+            
+            const payload = { 
+                instances: { prompt: finalPrompt }, 
+                parameters: { 
+                    "sampleCount": 1, 
+                    "aspectRatio": selectedRatio
+                } 
+            };
+            
+            const url = `${IMAGEN_API_URL}?key=${apiKey}`;
+            const response = await fetchWithRetry(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const base64Data = result?.predictions?.[0]?.bytesBase64Encoded;
+            
+            if (!base64Data) {
+                console.error("Imagen response structure error:", result);
+                throw new Error("Imagen 응답에서 이미지 데이터를 찾을 수 없습니다.");
+            }
+            return `data:image/png;base64,${base64Data}`;
+        }
+
+        // --- 메인 생성 함수 ---
+        window.generateInfographics = async function() {
+            const topicText = topicInput.value.trim();
+            const files = fileInput.files;
+            const type = infographicType.value;
+            const selectedPalette = colorPalette.value;
+            const selectedRatio = aspectRatio.value;
+            const selectedTypeText = infographicType.options[infographicType.selectedIndex].text.split('(')[0].trim();
+
+            if (topicText.length < 10 && files.length === 0) {
+                alert("인포그래픽을 생성하려면 주제를 10자 이상 입력하거나 파일을 첨부해야 합니다.");
+                return;
+            }
+            
+            if (files.length > MAX_FILES) { alert(`파일은 최대 ${MAX_FILES}개까지만 첨부할 수 있습니다.`); return; }
+            for (const file of files) { if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) { alert(`파일 "${file.name}"의 크기가 ${MAX_FILE_SIZE_MB}MB를 초과합니다. 모든 파일을 다시 확인해 주세요.`); return; } }
+
+            // UI 초기화 및 로딩 시작
+            generateButton.disabled = true;
+            loadingSpinner.classList.remove('hidden');
+            promptButton.style.display = 'none'; 
+            currentImagePrompt = null;
+            downloadButton.style.display = 'none';
+            imageA.classList.add('hidden');
+            messageA.classList.remove('hidden');
+            structuredDataArea.value = '';
+
+            messageA.textContent = `1단계: AI가 파일 ${files.length}개와 텍스트를 분석하여 구조화 및 디자인 프롬프트를 생성 중입니다.`;
+            buttonText.textContent = `1단계: ${selectedTypeText}형 분석 및 구조 추출 중...`;
+
+            try {
+                // 1. 프롬프트 및 구조화된 한국어 데이터 생성 (Gemini)
+                const { imagePrompt, structuredData } = await generatePromptAndData(topicText, type, selectedPalette, files);
+                currentImagePrompt = imagePrompt;
+                
+                // 구조화된 텍스트를 처리하여 개조식 형태로 표시
+                // ******************************************************
+                // 중요 수정: 텍스트 개조식 가독성을 위해 불필요한 공백 제거 후 할당
+                const processedStructuredData = structuredData.trim().replace(/^\s*\n/gm, '\n').replace(/\n\s*#/g, '\n#').replace(/\n\s*\*/g, '\n*');
+                structuredDataArea.value = processedStructuredData; 
+                // ******************************************************
+
+                
+                buttonText.textContent = '2단계: 디자인 템플릿 이미지 생성 중... (약 30초 소요)';
+                messageA.textContent = '이미지 생성 중...';
+                
+                // 2. 이미지 생성 (Imagen)
+                const imageUrl = await generateImage(imagePrompt, selectedPalette, selectedRatio);
+                currentInfographicBase64 = imageUrl;
+                
+                // UI 업데이트: 성공
+                imageA.src = imageUrl;
+                imageA.alt = `${selectedTypeText}형 디자인 템플릿: ${topicInput.value}`;
+                imageA.classList.remove('hidden');
+                messageA.classList.add('hidden');
+                
+                downloadButton.style.display = 'block'; 
+                promptButton.style.display = 'flex'; 
+
+                buttonText.textContent = `${selectedTypeText}형 템플릿 및 한국어 텍스트 생성 완료!`;
+                alert("생성 완료! 우측 '구조화된 한국어 텍스트'를 복사하여 이미지 템플릿에 붙여넣어 PPT를 완성하세요.");
+
+            } catch (error) {
+                console.error("인포그래픽 생성 중 오류 발생:", error);
+                
+                let errorMessage = `오류 발생: ${error.message}. (콘솔 확인)`;
+                
+                if (error.message.includes('API 인증 오류 (401)')) {
+                    errorMessage = "API 인증에 실패했습니다 (401 오류). Canvas 환경에 API 키가 제대로 로드되지 않았을 수 있습니다. 잠시 후 다시 시도해 주세요.";
+                }
+
+                messageA.textContent = errorMessage;
+                messageA.classList.remove('hidden');
+                imageA.classList.add('hidden');
+                
+                downloadButton.style.display = 'none';
+                promptButton.style.display = 'none';
+                
+                buttonText.textContent = '오류 발생. 다시 시도';
+
+            } finally {
+                generateButton.disabled = false;
+                loadingSpinner.classList.add('hidden');
+                setTimeout(() => {
+                    if (buttonText.textContent.includes('완료') || buttonText.textContent.includes('오류')) {
+                         buttonText.textContent = '인포그래픽 시안 생성 시작';
+                    }
+                }, 5000);
+            }
+        }
+
+        // --- 다운로드 로직 ---
+        downloadButton.addEventListener('click', () => {
+            if (currentInfographicBase64) {
+                const fileNamePrefix = infographicType.value.toLowerCase().replace(/\s/g, '_');
+                const timestamp = new Date().toISOString().slice(0,10);
+                
+                // PNG 다운로드
+                const link = document.createElement('a');
+                link.href = currentInfographicBase64;
+                link.download = `infographic_template_${fileNamePrefix}_${timestamp}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("다운로드할 결과물이 없습니다. 먼저 생성 버튼을 눌러주세요.");
+            }
+        });
+    </script>
+</body>
+</html>
